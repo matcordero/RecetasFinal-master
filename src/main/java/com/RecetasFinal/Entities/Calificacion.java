@@ -36,4 +36,6 @@ public class Calificacion {
 
     @Column(name = "comentarios", length = 500)
     private String comentarios;
+
+    //hola
 }
