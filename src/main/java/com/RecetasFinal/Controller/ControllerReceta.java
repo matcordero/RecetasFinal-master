@@ -93,7 +93,7 @@ public class ControllerReceta {
     		Usuario usuario = oUsuario.get();
     		usuario.setHabilitado("Si");
     		usuarioService.save(usuario);
-    		return ResponseEntity.ok().body("Habilitado");
+    		return ResponseEntity.ok().body("Cuenta Habilitada, regrese a la app para continuar");
     	}
     	return ResponseEntity.unprocessableEntity().body("No Habilitado");
     }
@@ -131,6 +131,7 @@ public class ControllerReceta {
     		usuarion.setMail(email);
     		usuarion.setNickname(alias);
     		usuarioService.save(usuarion);
+    		servicioMail.sendListEmail(email, "Seleccione el link para continuar con la creacion de la cuenta https://recetasfinal-master-production.up.railway.app/Recetas/Controller/habilitarCuenta/"+usuarion.getIdUsuario().toString());
     		return ResponseEntity.status(HttpStatus.CREATED).body(usuarion.getIdUsuario());
     	}
     	else if(contienemail) {
@@ -161,11 +162,16 @@ public class ControllerReceta {
         Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
         if(oUsuario.isPresent()) {
             Usuario usuario = oUsuario.get();
-            usuario.setNombre(nombre);
-            usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
-            usuario.setTipoUsuario("Visitante");
-            usuarioService.save(usuario);
-            return ResponseEntity.ok().body("Cuenta creada");
+            if(usuario.getHabilitado().equals("Si")) {
+            	usuario.setNombre(nombre);
+                usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
+                usuario.setTipoUsuario("Visitante");
+                usuarioService.save(usuario);
+                return ResponseEntity.ok().body("Cuenta creada");
+            }
+            else {
+            	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cuenta no Habilitada");
+            }
         }
         else {
             return ResponseEntity.unprocessableEntity().body("Error en los datos");
