@@ -94,7 +94,7 @@ public class ControllerReceta {
     		Sesion sesion = oSesion.get();
     		if(sesion.getPassword().equals(contrasena)) {
     			Usuario usuario = sesion.getUsuario();
-    			if(usuario.getHabilitado()=="Si") {
+    			if(usuario.getHabilitado().equals("Si")){
     				return ResponseEntity.ok().body(sesion.getUsuario());
     			}
     			else {
