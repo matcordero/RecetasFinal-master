@@ -85,7 +85,20 @@ public class ControllerReceta {
     }
     
     /*---Usuario---*/
-	
+    @CrossOrigin
+    @GetMapping(value = "/habilitarCuenta/{idUsuario}")
+    public ResponseEntity<?> habilitarCuenta(@PathVariable Integer idUsuario){
+    	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+    	if(oUsuario.isPresent()) {
+    		Usuario usuario = oUsuario.get();
+    		usuario.setHabilitado("Si");
+    		usuarioService.save(usuario);
+    		return ResponseEntity.ok().body("Habilitado");
+    	}
+    	return ResponseEntity.unprocessableEntity().body("No Habilitado");
+    }
+    
+    
     @CrossOrigin
     @GetMapping(value = "/login/{email}/{contrasena}")
     public ResponseEntity<?> getLogin(@PathVariable String email,@PathVariable String contrasena){
