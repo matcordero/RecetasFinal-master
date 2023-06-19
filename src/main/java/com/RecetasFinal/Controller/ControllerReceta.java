@@ -104,6 +104,8 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
     }
+    
+    @CrossOrigin
     @PostMapping(value = "/signUp1")
     public ResponseEntity<?> postSingUp1(@RequestParam("email") String email,@RequestParam("alias") String alias){
     	List<Usuario> usuario = usuarioService.findall();
@@ -139,7 +141,7 @@ public class ControllerReceta {
         
         return cadenasSimilares;
     }
-    
+    @CrossOrigin
     @PutMapping(value = "/signUp2")
     public ResponseEntity<?> putSingUp2(@RequestParam("idUsuario") int idUsuario,@RequestParam("nombre") String nombre,
             @RequestParam("contrasena") String contrasena){
@@ -157,7 +159,7 @@ public class ControllerReceta {
         }
     }
 	
-    
+    @CrossOrigin
     @PutMapping(value = "/cambiarFoto")
     public ResponseEntity<?> cambiarFoto(@RequestParam("email") String email,@RequestParam("contrasena") String contrasena,@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
@@ -173,7 +175,7 @@ public class ControllerReceta {
     	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
     }
 	
-	
+    @CrossOrigin
 	@GetMapping(value = "/recetasIntentar/{id}")
     public ResponseEntity<?> getLogin(@PathVariable Integer id){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(id);
@@ -183,7 +185,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
     }
-	
+    @CrossOrigin
 	@GetMapping(value = "/recetasCredas/{id}")
     public ResponseEntity<?> getCreadas(@PathVariable Integer id){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(id);
@@ -194,7 +196,7 @@ public class ControllerReceta {
     	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
     }
 	
-    
+    @CrossOrigin
     @PutMapping(value = "/cambiarContrasena")
     public ResponseEntity<?> putCambiarContrasena(@RequestParam("idUsuario") int idUsuario,@RequestParam("contrasenaNueva") String contrasenaNueva){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
@@ -207,7 +209,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
     }
-    
+    @CrossOrigin
     @PutMapping(value = "/mandarCodigo")
     public ResponseEntity<?> putCambiarContrasena(@RequestParam("email") String email){
     	String randomNumber = String.format("%06d", new Random().nextInt(1000000));
@@ -228,7 +230,7 @@ public class ControllerReceta {
     		return ResponseEntity.unprocessableEntity().body("Mail no Registrado");
     	}
     }
-    
+    @CrossOrigin
     @PutMapping(value = "/recuperarCuenta")
     public ResponseEntity<?> putCambiarContrasena(@RequestParam("email") String email,
     		@RequestParam("contrasena") String contrasea,@RequestParam("codigo") String codigo){
@@ -247,7 +249,7 @@ public class ControllerReceta {
     		return ResponseEntity.unprocessableEntity().body("Mail no Registrado");
     	}
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/getAllUsuarios")
     public ResponseEntity<?> getAllUsuarios() {
     	return ResponseEntity.ok().body(usuarioService.findall());
@@ -268,7 +270,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.ok().body(ultimasTresRecetas);
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/getRecipe/{id}")
     public ResponseEntity<?> getRecetasByNombre(@PathVariable Integer id) {
         Optional<Receta> oReceta = recetaService.findById(id);
@@ -278,7 +280,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/modificarCantidadSimple/{id}/{operacion}")
     public ResponseEntity<?> modificarCantidadSimple(@PathVariable Integer id,@PathVariable Integer operacion) {
         Optional<Receta> oReceta = recetaService.findById(id);
@@ -294,7 +296,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/modificarCantidadAvanzado/{idReceta}/{idIngrediente}/{cantidad}")
     public ResponseEntity<?> modificarCantidadAvanzado(@PathVariable Integer idReceta,@PathVariable Integer idIngrediente,@PathVariable Integer cantidad) {
         Optional<Receta> oReceta = recetaService.findById(idReceta);
@@ -310,7 +312,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
-    
+    @CrossOrigin
     @PostMapping(value = "/insertarComentarios")
     public ResponseEntity<?> insertarComentarios(@RequestParam("idUsuario") int idUsuario,
     		@RequestParam("contrasena") String contrasena, @RequestParam("idReceta") int idReceta,
@@ -338,7 +340,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/getMisRecetas/{idUsuario}/{contrasena}")
     public ResponseEntity<?> getMisRecetas(@PathVariable Integer idUsuario,@PathVariable String contrasena) {
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
@@ -351,7 +353,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Valido");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/validarNombre/{nombreReceta}/{idUsuario}")
     public ResponseEntity<?> validarNombre(@PathVariable String nombreReceta,@PathVariable int idUsuario) {
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
@@ -366,12 +368,12 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Valido");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/getIngredientes")
     public ResponseEntity<?> getIngredientes() {
     	return ResponseEntity.ok().body(ingredienteService.findAll());
     }
-    
+    @CrossOrigin
     @PostMapping(value = "/CargarReceta")
     public ResponseEntity<?> insertarComentarios(@RequestParam("idUsuario") int idUsuario,
     		@RequestParam("contrasena") String contrasena, @RequestParam("nombre") String nombre, 
@@ -433,14 +435,14 @@ public class ControllerReceta {
     
     
     
-    
+    @CrossOrigin
     @GetMapping(value = "/buscarReceta/{nombre}")
     public ResponseEntity<?> getRecetasByNombre(@PathVariable String nombre) {
         List<Receta> todasRecetas = recetaService.obtenerRecetasbyNombre(nombre);
         todasRecetas.sort(Comparator.comparing(Receta::getIdReceta).reversed());
         return ResponseEntity.ok().body(todasRecetas);
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/buscarCategoria/{idTipo}")
     public ResponseEntity<?> getRecetasByTipo(@PathVariable Integer idTipo) {
         Optional<Tipo> oTipo = tipoService.getTipobyId(idTipo);
@@ -451,7 +453,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Ese Tipo no existe");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/recetasByUsuario/{idUsuario}")
     public ResponseEntity<?> getRecetasByUsuario(@PathVariable Integer idUsuario) {
         Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
@@ -462,27 +464,27 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Ese Usuario no existe");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/recetasOrderByUsuario")
     public ResponseEntity<?> getRecetasOrderByUsuario() {
         List<Receta> todasRecetas = recetaService.obtenerTodosRecetas();
         todasRecetas.sort(Comparator.comparing(Receta::getNombreUsuario));
         return ResponseEntity.ok().body(todasRecetas);
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/recetasOrderByReceta")
     public ResponseEntity<?> getRecetasOrderByReceta() {
         List<Receta> todasRecetas = recetaService.obtenerTodosRecetas();
         todasRecetas.sort(Comparator.comparing(Receta::getNombre));
         return ResponseEntity.ok().body(todasRecetas);
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/recetasOrderByAntiguedad")
     public ResponseEntity<?> getRecetasOrderByAntiguedad() {
         List<Receta> todasRecetas = recetaService.obtenerTodosRecetas();
         return ResponseEntity.ok().body(todasRecetas);
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/getRecetasByIngrediente/{id}")
     public ResponseEntity<?> getRecetasByIngrediente(@PathVariable Integer idIngrediente) {
     	Optional<Ingrediente> oIngrediente = ingredienteService.findById(idIngrediente);
@@ -493,7 +495,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Ese Ingrediente no existe");
     }
-    
+    @CrossOrigin
     @GetMapping(value = "/getRecetasByNoIngrediente/{id}")
     public ResponseEntity<?> getRecetasByNoIngrediente(@PathVariable Integer idIngrediente) {
     	Optional<Ingrediente> oIngrediente = ingredienteService.findById(idIngrediente);
