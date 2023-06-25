@@ -156,7 +156,7 @@ public class ControllerReceta {
         return cadenasSimilares;
     }
     @CrossOrigin
-    @PutMapping(value = "/signUp2")
+    @PostMapping(value = "/signUp2")
     public ResponseEntity<?> putSingUp2(@RequestParam("idUsuario") int idUsuario,@RequestParam("nombre") String nombre,
             @RequestParam("contrasena") String contrasena){
         Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
@@ -179,7 +179,7 @@ public class ControllerReceta {
     }
 	
     @CrossOrigin
-    @PutMapping(value = "/cambiarFoto")
+    @PostMapping(value = "/cambiarFoto")
     public ResponseEntity<?> cambiarFoto(@RequestParam("email") String email,@RequestParam("contrasena") String contrasena,@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
     	if(oSesion.isPresent()) {
@@ -216,7 +216,7 @@ public class ControllerReceta {
     }
 	
     @CrossOrigin
-    @PutMapping(value = "/cambiarContrasena")
+    @PostMapping(value = "/cambiarContrasena")
     public ResponseEntity<?> putCambiarContrasena(@RequestParam("idUsuario") int idUsuario,@RequestParam("contrasenaNueva") String contrasenaNueva){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
     	if(oUsuario.isPresent()) {
@@ -229,7 +229,7 @@ public class ControllerReceta {
     	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
     }
     @CrossOrigin
-    @PutMapping(value = "/mandarCodigo")
+    @PostMapping(value = "/mandarCodigo")
     public ResponseEntity<?> putCambiarContrasena(@RequestParam("email") String email){
     	String randomNumber = String.format("%06d", new Random().nextInt(1000000));
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
@@ -250,7 +250,7 @@ public class ControllerReceta {
     	}
     }
     @CrossOrigin
-    @PutMapping(value = "/recuperarCuenta")
+    @PostMapping(value = "/recuperarCuenta")
     public ResponseEntity<?> putCambiarContrasena(@RequestParam("email") String email,
     		@RequestParam("contrasena") String contrasea,@RequestParam("codigo") String codigo){
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
