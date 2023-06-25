@@ -162,16 +162,13 @@ public class ControllerReceta {
         Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
         if(oUsuario.isPresent()) {
             Usuario usuario = oUsuario.get();
-            if(usuario.getHabilitado().equals("Si")) {
+            	usuario.setHabilitado("Si");
             	usuario.setNombre(nombre);
                 usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
                 usuario.setTipoUsuario("Visitante");
                 usuarioService.save(usuario);
                 return ResponseEntity.ok().body("Cuenta creada");
-            }
-            else {
-            	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Cuenta no Habilitada");
-            }
+            
         }
         else {
             return ResponseEntity.unprocessableEntity().body("Error en los datos");
