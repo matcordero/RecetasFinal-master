@@ -265,6 +265,25 @@ public class ControllerReceta {
     		return ResponseEntity.unprocessableEntity().body("Mail no Registrado");
     	}
     }
+    
+    @CrossOrigin
+    @PostMapping(value = "/validarCodigo")
+    public ResponseEntity<?> postValidarCodigo(@RequestParam("email") String email,
+    		@RequestParam("codigo") String codigo){
+    	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
+    	if(oSesion.isPresent()) {
+    		Sesion sesion = oSesion.get();
+    		if(codigo.equals(sesion.getCodigo())) {
+    			return ResponseEntity.ok().body("Codigo Correcto");
+    		}
+        	return ResponseEntity.unprocessableEntity().body("Codigo Incorrecto o Ya usado");
+    	}
+    	else {
+    		return ResponseEntity.unprocessableEntity().body("Mail no Registrado");
+    	}
+    }
+    
+    
     @CrossOrigin
     @GetMapping(value = "/getAllUsuarios")
     public ResponseEntity<?> getAllUsuarios() {
