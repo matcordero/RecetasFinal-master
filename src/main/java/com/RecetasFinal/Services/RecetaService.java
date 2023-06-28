@@ -44,7 +44,7 @@ public class RecetaService {
     }
     
     public List<Receta> obtenerRecetasbyNombre(String nombre){
-    	return recetaRepository.findByNombre(nombre);
+    	return recetaRepository.findByNombreLike("%"+nombre+"%");
     }
     
     public List<Receta> obtenerRecetasByUsuario(Usuario usuario){
@@ -52,7 +52,7 @@ public class RecetaService {
     }
     
     public Receta obtenerRecetaPorNombre(String nombre) {
-        return recetaRepository.findByNombre(nombre).get(0);
+        return recetaRepository.findByNombreLike("%"+nombre+"%").get(0);
     }
 
     public List<Receta> obtenerRecetasPorTipo(Tipo tipo) {
