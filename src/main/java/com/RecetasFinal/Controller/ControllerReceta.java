@@ -273,6 +273,8 @@ public class ControllerReceta {
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
     	if(oSesion.isPresent()) {
     		Sesion sesion = oSesion.get();
+    		System.out.println(codigo);
+    		System.out.println(sesion.getCodigo());
     		if(codigo.equals(sesion.getCodigo())) {
     			return ResponseEntity.ok().body("Codigo Correcto");
     		}

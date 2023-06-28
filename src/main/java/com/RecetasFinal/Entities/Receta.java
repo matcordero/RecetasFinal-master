@@ -73,7 +73,7 @@ public class Receta {
     		return 0;
     	}
     	else {
-    		int valoracionTotal = calificaciones.stream().mapToInt(value -> getValoracionGeneral()).sum();
+    		int valoracionTotal = calificaciones.stream().mapToInt(Calificacion::getCalificacion).sum();
         	return valoracionTotal/calificaciones.size();
     	}
     }
