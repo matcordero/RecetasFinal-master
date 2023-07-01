@@ -68,13 +68,16 @@ public class Receta {
     private List<Paso> pasos = new ArrayList<>();
     
     
-    public int getValoracionGeneral() {
+    public float getValoracionGeneral() {
     	if(calificaciones.size()==0) {
     		return 0;
     	}
     	else {
     		int valoracionTotal = calificaciones.stream().mapToInt(Calificacion::getCalificacion).sum();
-        	return valoracionTotal/calificaciones.size();
+    		long cantidadCalificacionesPositivas = calificaciones.stream()
+    		        .filter(calificacion -> calificacion.getCalificacion() > 0)
+    		        .count();
+        	return valoracionTotal/cantidadCalificacionesPositivas;
     	}
     }
     

@@ -176,6 +176,28 @@ public class ControllerReceta {
     }
 	
     @CrossOrigin
+    @PostMapping(value = "/signUp2Foto")
+    public ResponseEntity<?> putSingUp2Foto(@RequestParam("idUsuario") int idUsuario,@RequestParam("nombre") String nombre,
+            @RequestParam("contrasena") String contrasena, @RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
+        Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+        if(oUsuario.isPresent()) {
+            Usuario usuario = oUsuario.get();
+            Map<?, ?> result = cloudinaryService.upload(multipartFile);
+            usuario.setAvatar(result.get("url").toString());
+            usuario.setHabilitado("Si");
+            usuario.setNombre(nombre);
+            usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
+            usuario.setTipoUsuario("Visitante");
+            usuarioService.save(usuario);
+            return ResponseEntity.ok().body("Cuenta creada");
+            
+        }
+        else {
+            return ResponseEntity.unprocessableEntity().body("Error en los datos");
+        }
+    }
+    
+    @CrossOrigin
     @PostMapping(value = "/cambiarFoto")
     public ResponseEntity<?> cambiarFoto(@RequestParam("email") String email,@RequestParam("contrasena") String contrasena,@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
@@ -193,7 +215,7 @@ public class ControllerReceta {
 	
     @CrossOrigin
 	@GetMapping(value = "/recetasIntentar/{id}")
-    public ResponseEntity<?> getLogin(@PathVariable Integer id){
+    public ResponseEntity<?> recetasIntentar(@PathVariable Integer id){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(id);
     	if(oUsuario.isPresent()) {
     		Usuario usuario = oUsuario.get();
@@ -203,7 +225,7 @@ public class ControllerReceta {
     }
     @CrossOrigin
 	@GetMapping(value = "/recetasCredas/{id}")
-    public ResponseEntity<?> getCreadas(@PathVariable Integer id){
+    public ResponseEntity<?> getRecetasCreadas(@PathVariable Integer id){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(id);
     	if(oUsuario.isPresent()) {
     		Usuario usuario = oUsuario.get();
@@ -214,7 +236,7 @@ public class ControllerReceta {
 	
     @CrossOrigin
     @PostMapping(value = "/cambiarContrasena")
-    public ResponseEntity<?> putCambiarContrasena(@RequestParam("idUsuario") int idUsuario,@RequestParam("contrasenaNueva") String contrasenaNueva){
+    public ResponseEntity<?> postCambiarContrasena(@RequestParam("idUsuario") int idUsuario,@RequestParam("contrasenaNueva") String contrasenaNueva){
     	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
     	if(oUsuario.isPresent()) {
     		Usuario usuario = oUsuario.get();
@@ -227,7 +249,7 @@ public class ControllerReceta {
     }
     @CrossOrigin
     @PostMapping(value = "/mandarCodigo")
-    public ResponseEntity<?> putCambiarContrasena(@RequestParam("email") String email){
+    public ResponseEntity<?> postMandarCodigo(@RequestParam("email") String email){
     	String randomNumber = String.format("%06d", new Random().nextInt(1000000));
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
     	if(oSesion.isPresent()) {
@@ -248,7 +270,7 @@ public class ControllerReceta {
     }
     @CrossOrigin
     @PostMapping(value = "/recuperarCuenta")
-    public ResponseEntity<?> putCambiarContrasena(@RequestParam("email") String email,
+    public ResponseEntity<?> postRecuperarCuenta(@RequestParam("email") String email,
     		@RequestParam("contrasena") String contrasea,@RequestParam("codigo") String codigo){
     	Optional<Sesion> oSesion = sesionService.findSesionByMail(email);
     	if(oSesion.isPresent()) {
@@ -349,34 +371,83 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
+    
     @CrossOrigin
-    @PostMapping(value = "/insertarComentarios")
+    @PostMapping(value = "/insertarCalificacion")
     public ResponseEntity<?> insertarComentarios(@RequestParam("idUsuario") int idUsuario,
-    		@RequestParam("contrasena") String contrasena, @RequestParam("idReceta") int idReceta,
-    		@RequestParam("comentario") String comentario,@RequestParam("idUsuario") int valoracion) {
+    		@RequestParam("idReceta") int idReceta,@RequestParam("comentario") String comentario,@RequestParam("idUsuario") int valoracion) {
         Optional<Receta> oReceta = recetaService.findById(idReceta);
         if(oReceta.isPresent()) {
         	Receta receta = oReceta.get();
         	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
         	if(oUsuario.isPresent()) {
         		Usuario usuario = oUsuario.get();
-        		if(usuario.getSesion().getPassword().equals(contrasena)) {
-        			Calificacion calificacion = new Calificacion();
-        			calificacion.setCalificacion(valoracion);
-        			calificacion.setComentarios(comentario);
-        			calificacion.setReceta(receta);
-        			calificacion.setUsuario(usuario);
-        			calificacionService.save(calificacion);
-        			receta.addCalificacion(calificacion);
-        			recetaService.save(receta);
-        			return ResponseEntity.ok().body(receta.getCalificaciones());
-        		}
-        		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales Incorrectas");
+        		Calificacion calificacion = new Calificacion();
+        		calificacion.setCalificacion(valoracion);
+        		calificacion.setComentarios(comentario);
+        		calificacion.setReceta(receta);
+        		calificacion.setUsuario(usuario);
+        		calificacionService.save(calificacion);
+        		receta.addCalificacion(calificacion);
+        		recetaService.save(receta);
+        		return ResponseEntity.ok().body(receta.getCalificaciones());
         	}
         	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
+    
+    @CrossOrigin
+    @PostMapping(value = "/insertarCalificacionComentario")
+    public ResponseEntity<?> insertarCalificacionComentario(@RequestParam("idUsuario") int idUsuario,
+    		@RequestParam("idReceta") int idReceta, @RequestParam("comentario") String comentario) {
+        Optional<Receta> oReceta = recetaService.findById(idReceta);
+        if(oReceta.isPresent()) {
+        	Receta receta = oReceta.get();
+        	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+        	if(oUsuario.isPresent()) {
+        		Usuario usuario = oUsuario.get();
+        		Calificacion calificacion = new Calificacion();
+        		calificacion.setCalificacion(0);
+        		calificacion.setComentarios(comentario);
+        		calificacion.setReceta(receta);
+        		calificacion.setUsuario(usuario);
+        		calificacionService.save(calificacion);
+        		receta.addCalificacion(calificacion);
+        		recetaService.save(receta);
+        		return ResponseEntity.ok().body(receta.getCalificaciones());	
+        	}
+        	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
+        }
+        return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    }
+    
+    @CrossOrigin
+    @PostMapping(value = "/insertarCalificacionValoracion")
+    public ResponseEntity<?> insertarCalificacionValoracion(@RequestParam("idUsuario") int idUsuario,
+    		@RequestParam("idReceta") int idReceta, @RequestParam("valoracion") int valoracion) {
+        Optional<Receta> oReceta = recetaService.findById(idReceta);
+        if(oReceta.isPresent()) {
+        	Receta receta = oReceta.get();
+        	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+        	if(oUsuario.isPresent()) {
+        		Usuario usuario = oUsuario.get();
+        		Calificacion calificacion = new Calificacion();
+        		calificacion.setCalificacion(valoracion);
+        		calificacion.setComentarios("");
+        		calificacion.setReceta(receta);
+        		calificacion.setUsuario(usuario);
+        		calificacionService.save(calificacion);
+        		receta.addCalificacion(calificacion);
+        		recetaService.save(receta);
+        		return ResponseEntity.ok().body(receta.getCalificaciones());
+        	}
+        	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
+        }
+        return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    }
+    
+    
     @CrossOrigin
     @GetMapping(value = "/getMisRecetas/{idUsuario}/{contrasena}")
     public ResponseEntity<?> getMisRecetas(@PathVariable Integer idUsuario,@PathVariable String contrasena) {
@@ -390,6 +461,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Valido");
     }
+    //TODO//
     @CrossOrigin
     @GetMapping(value = "/validarNombre/{nombreReceta}/{idUsuario}")
     public ResponseEntity<?> validarNombre(@PathVariable String nombreReceta,@PathVariable int idUsuario) {
@@ -405,6 +477,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Valido");
     }
+    
     @CrossOrigin
     @GetMapping(value = "/getIngredientes")
     public ResponseEntity<?> getIngredientes() {
@@ -412,7 +485,7 @@ public class ControllerReceta {
     }
     @CrossOrigin
     @PostMapping(value = "/CargarReceta")
-    public ResponseEntity<?> insertarComentarios(@RequestParam("idUsuario") int idUsuario,
+    public ResponseEntity<?> cargarReceta(@RequestParam("idUsuario") int idUsuario,
     		@RequestParam("contrasena") String contrasena, @RequestParam("nombre") String nombre, 
     		//@RequestParam("utilizados") List<Utilizado> utilizados, 
     		//@RequestParam("pasos") List<Paso> pasos, 
