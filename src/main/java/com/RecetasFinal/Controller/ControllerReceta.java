@@ -68,6 +68,9 @@ public class ControllerReceta {
 	private CloudinaryService cloudinaryService;
     
     @Autowired
+    private UnidadService unidadService;
+    
+    @Autowired
     private ServicioMail servicioMail;
     
     /*--Mandar Mail--*/
@@ -489,6 +492,12 @@ public class ControllerReceta {
     @GetMapping(value = "/getCategorias")
     public ResponseEntity<?> getCategorias() {
     	return ResponseEntity.ok().body(tipoService.findAll());
+    }
+    
+    @CrossOrigin
+    @GetMapping(value = "/getUnidades")
+    public ResponseEntity<?> getUnidad() {
+    	return ResponseEntity.ok().body(unidadService.findAll());
     }
     
     @CrossOrigin
