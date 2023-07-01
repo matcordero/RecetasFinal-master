@@ -126,6 +126,10 @@ public class Receta {
     	return this.usuario.getNombre();
     }
     
+    public String getFotoUsuario() {
+    	return this.usuario.getAvatar();
+    }
+    
     public boolean tieneIngrediente(Ingrediente ingrediente) {
     	return 0<utilizados.stream().filter(u -> u.getIngrediente() == ingrediente).count();
     }
