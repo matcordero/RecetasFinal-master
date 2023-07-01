@@ -1,5 +1,6 @@
 package com.RecetasFinal.Services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +19,9 @@ public class TipoService {
     
     public Optional<Tipo> getTipobyId(Integer id){
     	return tipoRepository.findById(id);
+    }
+    
+    public List<Tipo> findAll(){
+    	return tipoRepository.findAll();
     }
 }

@@ -469,9 +469,10 @@ public class ControllerReceta {
     	if(oUsuario.isPresent()) {
     		Usuario usuario = oUsuario.get();
     		List<Receta> recetas = usuario.getRecetasCreadas();
-    		boolean nombreUsado = 0<recetas.stream().filter(r -> r.getNombre().equals(nombreReceta)).count();
+    		List<Receta> recetasNombre = recetas.stream().filter(r -> r.getNombre().equals(nombreReceta)).toList();
+    		boolean nombreUsado = 0<recetasNombre.size();
     		if(nombreUsado) {
-    			return ResponseEntity.unprocessableEntity().body("Nombre Usado");
+    			return ResponseEntity.unprocessableEntity().body(recetasNombre.get(0));
     		}
     		return ResponseEntity.ok().body("Nombre Disponible");
     	}
@@ -483,6 +484,13 @@ public class ControllerReceta {
     public ResponseEntity<?> getIngredientes() {
     	return ResponseEntity.ok().body(ingredienteService.findAll());
     }
+    
+    @CrossOrigin
+    @GetMapping(value = "/getCategorias")
+    public ResponseEntity<?> getCategorias() {
+    	return ResponseEntity.ok().body(tipoService.findAll());
+    }
+    
     @CrossOrigin
     @PostMapping(value = "/CargarReceta")
     public ResponseEntity<?> cargarReceta(@RequestParam("idUsuario") int idUsuario,
