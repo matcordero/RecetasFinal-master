@@ -104,7 +104,7 @@ public class Receta {
     		utilizado.setCantidad(utilizado.getCantidad()/2);
     	}
     	porciones = porciones/2;
-    	
+    	cantidadPersonas = cantidadPersonas/2;
     }
     
     public void getRecetaDoble() {
@@ -112,6 +112,7 @@ public class Receta {
     		utilizado.setCantidad(utilizado.getCantidad()*2);
     	}
     	porciones = porciones*2;
+    	cantidadPersonas = cantidadPersonas*2;
     }
     
     public void addCalificacion(Calificacion calificacion) {
