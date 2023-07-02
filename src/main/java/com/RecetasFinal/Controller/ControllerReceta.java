@@ -107,7 +107,7 @@ public class ControllerReceta {
     @CrossOrigin
     @GetMapping(value = "/foto2")
     public ResponseEntity<?> foto2(@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
-    	try {
+
             	Map<?, ?> result = cloudinaryService.upload(multipartFile);
         		String originalFilename = multipartFile.getOriginalFilename();
         		String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
@@ -115,10 +115,7 @@ public class ControllerReceta {
                 foto.setUrlFoto(result.get("url").toString());
                 foto.setExtension(extension);
         		return ResponseEntity.ok().body(fotoService.save(foto));
-    		
-		} catch (Exception e) {
-			return ResponseEntity.unprocessableEntity().body("Fallo al cargar Foto");
-		}
+
     	
     }
     
