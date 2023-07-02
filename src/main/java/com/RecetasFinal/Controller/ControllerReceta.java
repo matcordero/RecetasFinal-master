@@ -418,7 +418,7 @@ public class ControllerReceta {
         		calificacionService.save(calificacion);
         		receta.addCalificacion(calificacion);
         		recetaService.save(receta);
-        		return ResponseEntity.ok().body(receta.getCalificaciones());	
+        		return ResponseEntity.ok().body(calificacion);	
         	}
         	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
         }
@@ -435,19 +435,47 @@ public class ControllerReceta {
         	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
         	if(oUsuario.isPresent()) {
         		Usuario usuario = oUsuario.get();
-        		Calificacion calificacion = new Calificacion();
-        		calificacion.setCalificacion(valoracion);
-        		calificacion.setComentarios("");
-        		calificacion.setReceta(receta);
-        		calificacion.setUsuario(usuario);
-        		calificacionService.save(calificacion);
-        		receta.addCalificacion(calificacion);
-        		recetaService.save(receta);
-        		return ResponseEntity.ok().body(receta.getCalificaciones());
+        		List<Calificacion> calificaciones = receta.getCalificaciones().stream().filter(c -> c.getUsuario().equals(usuario)).toList();
+            	calificaciones = calificaciones.stream().filter(c -> c.getCalificacion()>0).toList();
+            	if (calificaciones.size()>0) {
+            		Calificacion calificacion = calificaciones.get(0);
+            		calificacion.setCalificacion(valoracion);
+            		recetaService.save(receta);
+            		return ResponseEntity.ok().body(valoracion);
+            	}
+            	else {
+            		Calificacion calificacion = new Calificacion();
+            		calificacion.setCalificacion(valoracion);
+            		calificacion.setComentarios("");
+            		calificacion.setReceta(receta);
+            		calificacion.setUsuario(usuario);
+            		calificacionService.save(calificacion);
+            		receta.addCalificacion(calificacion);
+            		recetaService.save(receta);
+            		return ResponseEntity.ok().body(valoracion);
+            	}
         	}
         	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    }
+    
+    @CrossOrigin
+    @GetMapping(value = "getValoracionUsuarioReceta/{idUsuario}/{idReceta}")
+    public ResponseEntity<?> getValoracionUsuarioReceta(@PathVariable Integer idUsuario,@PathVariable Integer idReceta){
+    	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+    	if(oUsuario.isPresent()) {
+    		Usuario usuario = oUsuario.get();
+    		Optional<Receta> oReceta = recetaService.findById(idReceta);
+            if(oReceta.isPresent()) {
+            	Receta receta = oReceta.get();
+            	List<Calificacion> calificaciones = receta.getCalificaciones().stream().filter(c -> c.getUsuario().equals(usuario)).toList();
+            	int valoracionTotal = calificaciones.stream().mapToInt(Calificacion::getCalificacion).sum();
+            	return ResponseEntity.ok().body(valoracionTotal);
+            }
+            return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    	}
+    	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
     }
     
     
