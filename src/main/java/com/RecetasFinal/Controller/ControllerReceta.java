@@ -211,7 +211,7 @@ public class ControllerReceta {
     }
 	
     @CrossOrigin
-    @PostMapping(value = "/signUp2Foto")
+    @GetMapping(value = "/signUp2Foto")
     public ResponseEntity<?> putSingUp2Foto(@RequestParam("idUsuario") int idUsuario,@RequestParam("nombre") String nombre,
             @RequestParam("contrasena") String contrasena, @RequestParam("fotoPerfil") MultipartFile fotoPerfil) throws IOException{
         Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
