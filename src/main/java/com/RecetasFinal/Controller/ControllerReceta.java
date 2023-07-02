@@ -506,12 +506,14 @@ public class ControllerReceta {
             	Receta receta = oReceta.get();
             	Boolean Contiene = usuario.getRecetasIntentar().contains(receta);
             	if(Contiene) {
-            		
+            		usuario.getRecetasIntentar().remove(receta);
+            		usuarioService.save(usuario);
+            		return ResponseEntity.ok().body("Receta Eliminada");
             	}
             	else {
             		usuario.addRecetaIntentar(receta);
             		usuarioService.save(usuario);
-            		return ResponseEntity.ok().body("d");
+            		return ResponseEntity.ok().body("Receta Guardada");
             	}
             	
             }
