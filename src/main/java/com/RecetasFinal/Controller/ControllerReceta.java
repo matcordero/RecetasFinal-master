@@ -212,23 +212,31 @@ public class ControllerReceta {
 	
     @CrossOrigin
     @GetMapping(value = "/signUp2Foto")
-    public ResponseEntity<?> putSingUp2Foto(@RequestParam("idUsuario") int idUsuario,@RequestParam("nombre") String nombre,
+    public ResponseEntity<?> putSingUp2Foto(@RequestParam("idUsuario") String idUsuario,@RequestParam("nombre") String nombre,
             @RequestParam("contrasena") String contrasena, @RequestParam("fotoPerfil") MultipartFile fotoPerfil) throws IOException{
-        Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
-        if(oUsuario.isPresent()) {
-            Usuario usuario = oUsuario.get();
-            Map<?, ?> result = cloudinaryService.upload(fotoPerfil);
-            usuario.setAvatar(result.get("url").toString());
-            usuario.setHabilitado("Si");
-            usuario.setNombre(nombre);
-            usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
-            usuario.setTipoUsuario("Visitante");
-            usuarioService.save(usuario);
-            return ResponseEntity.ok().body("Cuenta creada"); 
+        try {
+        	Integer usuarioID = Integer.parseInt(idUsuario);
+        	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(usuarioID);
+            if(oUsuario.isPresent()) {
+                Usuario usuario = oUsuario.get();
+                Map<?, ?> result = cloudinaryService.upload(fotoPerfil);
+                usuario.setAvatar(result.get("url").toString());
+                usuario.setHabilitado("Si");
+                usuario.setNombre(nombre);
+                usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
+                usuario.setTipoUsuario("Visitante");
+                usuarioService.save(usuario);
+                return ResponseEntity.ok().body("Cuenta creada"); 
+            }
+            else {
+                return ResponseEntity.unprocessableEntity().body("Error en los datos");
+            }
         }
-        else {
-            return ResponseEntity.unprocessableEntity().body("Error en los datos");
+        catch (Exception e) {
+        	return ResponseEntity.unprocessableEntity().body("Fallo al cargar Foto");
         }
+    	
+    	
     }
     
     
