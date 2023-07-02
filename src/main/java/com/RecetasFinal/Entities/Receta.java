@@ -91,6 +91,7 @@ public class Receta {
     	Utilizado utilizado = utilizados.stream().filter(u -> u.isUtilizado(ingrediente)).findFirst().get();
     	int cantidadActual = utilizado.getCantidad();
     	float proporcion = cantidad/cantidadActual;
+    	cantidadPersonas = (int) Math.floor(cantidadPersonas*proporcion);
     	porciones = (int) Math.floor(porciones * proporcion);
     	for(Utilizado utilizadoNuevos: utilizados) {
     		utilizadoNuevos.setCantidad((int) Math.ceil(utilizadoNuevos.getCantidad()*proporcion));
