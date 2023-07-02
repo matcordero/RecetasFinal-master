@@ -73,6 +73,25 @@ public class ControllerReceta {
     @Autowired
     private ServicioMail servicioMail;
     
+    /*--Cargar Fotos--*/
+    @CrossOrigin
+    @GetMapping(value = "/foto")
+    public ResponseEntity<?> foto(@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
+    	try {
+    		Map<?, ?> result = cloudinaryService.upload(multipartFile);
+    		String originalFilename = multipartFile.getOriginalFilename();
+    		String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+            Foto foto = new Foto();
+            foto.setUrlFoto(result.get("url").toString());
+            foto.setExtension(extension);
+    		return ResponseEntity.ok().body(fotoService.save(foto));
+		} catch (Exception e) {
+			return ResponseEntity.unprocessableEntity().body("Fallo al cargar Foto");
+		}
+    	
+    }
+    
+    
     /*--Mandar Mail--*/
     
     @CrossOrigin
@@ -391,6 +410,7 @@ public class ControllerReceta {
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
     
+    //TODO//
     @CrossOrigin
     @GetMapping(value = "/modificarCantidadPersonas/{idReceta}/{cantidad}")
     public ResponseEntity<?> modificarCantidadPersonas(@PathVariable Integer idReceta,@PathVariable Integer cantidad) {
