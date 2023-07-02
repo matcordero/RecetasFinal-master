@@ -459,7 +459,7 @@ public class ControllerReceta {
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
-    
+    //TODO//
     @CrossOrigin
     @GetMapping(value = "getValoracionUsuarioReceta/{idUsuario}/{idReceta}")
     public ResponseEntity<?> getValoracionUsuarioReceta(@PathVariable Integer idUsuario,@PathVariable Integer idReceta){
@@ -478,6 +478,47 @@ public class ControllerReceta {
     	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
     }
     
+    @CrossOrigin
+    @GetMapping(value = "getUsuarioGuardoReceta/{idUsuario}/{idReceta}")
+    public ResponseEntity<?> getUsuarioGuardoReceta(@PathVariable Integer idUsuario,@PathVariable Integer idReceta){
+    	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+    	if(oUsuario.isPresent()) {
+    		Usuario usuario = oUsuario.get();
+    		Optional<Receta> oReceta = recetaService.findById(idReceta);
+            if(oReceta.isPresent()) {
+            	Receta receta = oReceta.get();
+            	Boolean Contiene = usuario.getRecetasIntentar().contains(receta);
+            	return ResponseEntity.ok().body(Contiene);
+            }
+            return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    	}
+    	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
+    }
+    
+    @CrossOrigin
+    @PostMapping(value = "setUsuarioGuardoReceta/{idUsuario}/{idReceta}")
+    public ResponseEntity<?> setUsuarioGuardoReceta(@PathVariable Integer idUsuario,@PathVariable Integer idReceta){
+    	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+    	if(oUsuario.isPresent()) {
+    		Usuario usuario = oUsuario.get();
+    		Optional<Receta> oReceta = recetaService.findById(idReceta);
+            if(oReceta.isPresent()) {
+            	Receta receta = oReceta.get();
+            	Boolean Contiene = usuario.getRecetasIntentar().contains(receta);
+            	if(Contiene) {
+            		
+            	}
+            	else {
+            		usuario.addRecetaIntentar(receta);
+            		usuarioService.save(usuario);
+            		return ResponseEntity.ok().body("d");
+            	}
+            	
+            }
+            return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    	}
+    	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
+    }
     
     @CrossOrigin
     @GetMapping(value = "/getMisRecetas/{idUsuario}/{contrasena}")
@@ -492,7 +533,7 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Valido");
     }
-    //TODO//
+    
     @CrossOrigin
     @GetMapping(value = "/validarNombre/{nombreReceta}/{idUsuario}")
     public ResponseEntity<?> validarNombre(@PathVariable String nombreReceta,@PathVariable int idUsuario) {
@@ -661,5 +702,6 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Ese Ingrediente no existe");
     }
+    
     
 }
