@@ -213,11 +213,11 @@ public class ControllerReceta {
     @CrossOrigin
     @PostMapping(value = "/signUp2Foto")
     public ResponseEntity<?> putSingUp2Foto(@RequestParam("idUsuario") int idUsuario,@RequestParam("nombre") String nombre,
-            @RequestParam("contrasena") String contrasena, @RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
+            @RequestParam("contrasena") String contrasena, @RequestParam("fotoPerfil") MultipartFile fotoPerfil) throws IOException{
         Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
         if(oUsuario.isPresent()) {
             Usuario usuario = oUsuario.get();
-            Map<?, ?> result = cloudinaryService.upload(multipartFile);
+            Map<?, ?> result = cloudinaryService.upload(fotoPerfil);
             usuario.setAvatar(result.get("url").toString());
             usuario.setHabilitado("Si");
             usuario.setNombre(nombre);
