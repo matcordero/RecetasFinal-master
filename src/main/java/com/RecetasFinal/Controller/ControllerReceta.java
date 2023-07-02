@@ -76,15 +76,28 @@ public class ControllerReceta {
     /*--Cargar Fotos--*/
     @CrossOrigin
     @GetMapping(value = "/foto")
-    public ResponseEntity<?> foto(@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
+    public ResponseEntity<?> foto(@RequestParam("idReceta") Integer idReceta,@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
     	try {
-    		Map<?, ?> result = cloudinaryService.upload(multipartFile);
-    		String originalFilename = multipartFile.getOriginalFilename();
-    		String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
-            Foto foto = new Foto();
-            foto.setUrlFoto(result.get("url").toString());
-            foto.setExtension(extension);
-    		return ResponseEntity.ok().body(fotoService.save(foto));
+    		Optional<Receta> oReceta = recetaService.findById(idReceta);
+            if(oReceta.isPresent()) {
+            	Receta receta = oReceta.get();
+            	Map<?, ?> result = cloudinaryService.upload(multipartFile);
+        		String originalFilename = multipartFile.getOriginalFilename();
+        		String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+                Foto foto = new Foto();
+                foto.setUrlFoto(result.get("url").toString());
+                foto.setExtension(extension);
+                foto.setReceta(receta);
+                fotoService.save(foto);
+                receta.setFoto(foto);
+                System.out.println("Aca");
+                recetaService.save(receta);
+        		return ResponseEntity.ok().body("Cargada");
+            }
+            else {
+            	return ResponseEntity.unprocessableEntity().body("No se encontro Receta");
+            }
+    		
 		} catch (Exception e) {
 			return ResponseEntity.unprocessableEntity().body("Fallo al cargar Foto");
 		}
