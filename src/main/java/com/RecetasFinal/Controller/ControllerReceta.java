@@ -192,13 +192,14 @@ public class ControllerReceta {
             usuario.setSesion(new Sesion(usuario.getMail(), contrasena, usuario));
             usuario.setTipoUsuario("Visitante");
             usuarioService.save(usuario);
-            return ResponseEntity.ok().body("Cuenta creada");
-            
+            return ResponseEntity.ok().body("Cuenta creada"); 
         }
         else {
             return ResponseEntity.unprocessableEntity().body("Error en los datos");
         }
     }
+    
+    
     
     @CrossOrigin
     @PostMapping(value = "/cambiarFoto")
@@ -368,9 +369,36 @@ public class ControllerReceta {
         	if(oIngrediente.isPresent()) {
         		Ingrediente ingrediente = oIngrediente.get();
         		receta.modificarIngrediente(ingrediente, cantidad);
-        		ResponseEntity.ok().body(receta);
+        		return ResponseEntity.ok().body(receta);
         	}
-        	ResponseEntity.unprocessableEntity().body("Ingrediente no Encontrada");
+        	return ResponseEntity.unprocessableEntity().body("Ingrediente no Encontrada");
+        }
+        return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    }
+    
+    
+    
+    
+    @CrossOrigin
+    @GetMapping(value = "/modificarCantidadPorciones/{idReceta}/{cantidad}")
+    public ResponseEntity<?> modificarCantidadPorciones(@PathVariable Integer idReceta,@PathVariable Integer cantidad) {
+        Optional<Receta> oReceta = recetaService.findById(idReceta);
+        if(oReceta.isPresent()) {
+        	Receta receta = oReceta.get();
+        	receta.modificarPorciones(cantidad);
+        	return ResponseEntity.ok().body(receta);
+        }
+        return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    }
+    
+    @CrossOrigin
+    @GetMapping(value = "/modificarCantidadPersonas/{idReceta}/{cantidad}")
+    public ResponseEntity<?> modificarCantidadPersonas(@PathVariable Integer idReceta,@PathVariable Integer cantidad) {
+        Optional<Receta> oReceta = recetaService.findById(idReceta);
+        if(oReceta.isPresent()) {
+        	Receta receta = oReceta.get();
+        	receta.modificarCantPersonas(cantidad);
+        	return ResponseEntity.ok().body(receta);
         }
         return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
     }
@@ -491,6 +519,17 @@ public class ControllerReceta {
             	return ResponseEntity.ok().body(Contiene);
             }
             return ResponseEntity.unprocessableEntity().body("Receta no Encontrada");
+    	}
+    	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
+    }
+    
+    @CrossOrigin
+    @GetMapping(value = "getUsuarioGuardados/{idUsuario}")
+    public ResponseEntity<?> getUsuarioGuardados(@PathVariable Integer idUsuario){
+    	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(idUsuario);
+    	if(oUsuario.isPresent()) {
+    		Usuario usuario = oUsuario.get();
+            return ResponseEntity.ok().body(usuario.getRecetasIntentar());
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Encontrado");
     }

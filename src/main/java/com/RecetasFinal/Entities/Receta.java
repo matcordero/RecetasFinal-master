@@ -93,11 +93,30 @@ public class Receta {
     	float proporcion = cantidad/cantidadActual;
     	porciones = (int) Math.floor(porciones * proporcion);
     	for(Utilizado utilizadoNuevos: utilizados) {
-    		utilizado.setCantidad((int) Math.ceil(utilizado.getCantidad()*proporcion));
+    		utilizadoNuevos.setCantidad((int) Math.ceil(utilizadoNuevos.getCantidad()*proporcion));
     	}
     	//int resultado = (int) Math.ceil(entero * flotante);
     }
     
+    public void modificarPorciones(int porcion) {
+    	int porcionActual = porciones;
+    	float proporcion = porcion/porcionActual;
+    	porciones = porcion;
+    	cantidadPersonas = (int) Math.floor(cantidadPersonas*proporcion);
+    	for(Utilizado utilizadoNuevos: utilizados) {
+    		utilizadoNuevos.setCantidad((int) Math.ceil(utilizadoNuevos.getCantidad()*proporcion));
+    	}	
+    }
+    
+    public void modificarCantPersonas(int personas) {
+    	int personasActual = cantidadPersonas;
+    	float proporcion = personas/personasActual;
+    	cantidadPersonas = personas;
+    	porciones = (int) Math.floor(porciones*proporcion);
+    	for(Utilizado utilizadoNuevos: utilizados) {
+    		utilizadoNuevos.setCantidad((int) Math.ceil(utilizadoNuevos.getCantidad()*proporcion));
+    	}	
+    }
     
     public void getRecetaMitad() {
     	for(Utilizado utilizado: utilizados) {
