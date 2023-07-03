@@ -179,7 +179,7 @@ public class ControllerReceta {
     @CrossOrigin
     @PostMapping(value = "/CrearReceta")
     public ResponseEntity<?> crearReceta(@RequestBody Receta receta){
-    	System.out.println(receta);
+    	//System.out.println(receta);
     	List<Paso> pasos = receta.getPasos();
     	for(Paso paso:pasos) {
     		paso.setReceta(receta);

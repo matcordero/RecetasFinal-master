@@ -93,10 +93,10 @@ public class Receta {
     
     public void modificarIngrediente(Ingrediente ingrediente, int cantidad) {
     	Utilizado utilizado = utilizados.stream().filter(u -> u.isUtilizado(ingrediente)).findFirst().get();
-    	int cantidadActual = utilizado.getCantidad();
-    	float proporcion = cantidad/cantidadActual;
+    	float cantidadActual = utilizado.getCantidad();
+    	float proporcion = (float) cantidad/cantidadActual;
     	cantidadPersonas = (int) Math.floor(cantidadPersonas*proporcion);
-    	porciones = (int) Math.floor(porciones * proporcion);
+    	porciones = (int) Math.floor((float)porciones * proporcion);
     	for(Utilizado utilizadoNuevos: utilizados) {
     		utilizadoNuevos.setCantidad((int) Math.ceil(utilizadoNuevos.getCantidad()*proporcion));
     	}
@@ -104,8 +104,9 @@ public class Receta {
     }
     
     public void modificarPorciones(int porcion) {
-    	int porcionActual = porciones;
-    	float proporcion = porcion/porcionActual;
+    	float porcionActual = porciones;
+    	float proporcion = (float) porcion/porcionActual;
+    	System.out.println(proporcion);
     	porciones = porcion;
     	cantidadPersonas = (int) Math.floor(cantidadPersonas*proporcion);
     	for(Utilizado utilizadoNuevos: utilizados) {
@@ -114,8 +115,8 @@ public class Receta {
     }
     
     public void modificarCantPersonas(int personas) {
-    	int personasActual = cantidadPersonas;
-    	float proporcion = personas/personasActual;
+    	float personasActual = cantidadPersonas;
+    	float proporcion = (float) personas/personasActual;
     	cantidadPersonas = personas;
     	porciones = (int) Math.floor(porciones*proporcion);
     	for(Utilizado utilizadoNuevos: utilizados) {
