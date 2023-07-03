@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,9 +36,23 @@ import com.RecetasFinal.Entities.Receta;
 import com.RecetasFinal.Entities.Recetas_Usuario;
 import com.RecetasFinal.Entities.Sesion;
 import com.RecetasFinal.Entities.Tipo;
+import com.RecetasFinal.Entities.Unidad;
 import com.RecetasFinal.Entities.Usuario;
 import com.RecetasFinal.Entities.Utilizado;
+import com.RecetasFinal.Entities.UtilizadoRecibido;
 import com.RecetasFinal.Services.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @CrossOrigin
 @RestController
@@ -73,10 +88,14 @@ public class ControllerReceta {
     private UnidadService unidadService;
     
     @Autowired
+    private UtilizadoService utilizadoService;
+    
+    @Autowired
     private ServicioMail servicioMail;
     
     @Autowired
     private Recetas_UsuarioService recetas_UsuarioService;
+    
     
     /*--Cargar Fotos--*/
     @CrossOrigin
@@ -111,7 +130,7 @@ public class ControllerReceta {
     
     @CrossOrigin
     @GetMapping(value = "/foto2")
-    public ResponseEntity<?> foto2(@RequestParam("multipartFile") MultipartFile multipartFile) throws IOException{
+    public ResponseEntity<?> foto2(@RequestPart("multipartFile") MultipartFile multipartFile) throws IOException{
 
             	Map<?, ?> result = cloudinaryService.upload(multipartFile);
         		String originalFilename = multipartFile.getOriginalFilename();
@@ -141,8 +160,21 @@ public class ControllerReceta {
     //TODO//
     @CrossOrigin
     @GetMapping(value = "/probar")
-    public ResponseEntity<?> probar(@RequestBody Ingrediente ingrediente){
-    	return ResponseEntity.ok().body(ingredienteService.save(ingrediente));
+    public ResponseEntity<?> probar(@RequestBody List<UtilizadoRecibido> utilizados){
+    	List<Utilizado> utilizadosEnviar = new ArrayList<>();
+    	for(UtilizadoRecibido utilizado:utilizados) {
+    		System.out.println(utilizado);
+    		Utilizado utilizadoEnviar = new Utilizado();
+    		Receta receta = recetaService.findById(utilizado.getIdReceta()).get();
+    		utilizadoEnviar.setReceta(receta);
+    		utilizadoEnviar.setIngrediente(utilizado.getIngrediente());
+    		utilizadoEnviar.setObservaciones(utilizado.getObservaciones());
+    		utilizadoEnviar.setUnidad(utilizado.getUnidad());
+    		utilizadoEnviar.setCantidad(utilizado.getCantidad());
+    		utilizadoService.save(utilizadoEnviar);
+    		utilizadosEnviar.add(utilizadoEnviar);
+    	}
+    	return ResponseEntity.ok().body(utilizadosEnviar);
     }
     
     
@@ -242,7 +274,7 @@ public class ControllerReceta {
     @CrossOrigin
     @PostMapping(value = "/signUp2Foto")
     public ResponseEntity<?> putSingUp2Foto(@RequestParam("idUsuario") String idUsuario,@RequestParam("nombre") String nombre,
-            @RequestParam("contrasena") String contrasena,@RequestParam("fotoPerfil") MultipartFile fotoPerfil) throws IOException{
+            @RequestParam("contrasena") String contrasena,@RequestPart("fotoPerfil") MultipartFile fotoPerfil) throws IOException{
         try {
         	Integer usuarioID = Integer.parseInt(idUsuario);
         	Optional<Usuario> oUsuario = usuarioService.findUsuarioById(usuarioID);

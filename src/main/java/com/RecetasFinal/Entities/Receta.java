@@ -57,7 +57,7 @@ public class Receta {
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Foto> fotos= new ArrayList<>();
-
+    
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Utilizado> utilizados = new ArrayList<>();
 

@@ -19,4 +19,8 @@ public class UtilizadoService {
     /*public List<Utilizado> getUtilizadosByIngrediente(Long idIngrediente) {
         return utilizadoRepository.findByIngredienteId(idIngrediente);
     }*/
+    
+    public Utilizado save(Utilizado utilizado) {
+    	return utilizadoRepository.save(utilizado);
+    }
 }
