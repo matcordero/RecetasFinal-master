@@ -23,4 +23,8 @@ public class IngredienteService {
     public List<Ingrediente> findAll(){
     	return ingredienteRepository.findAll();
     }
+    
+    public Ingrediente save(Ingrediente ingrediente) {
+    	return ingredienteRepository.save(ingrediente);
+    }
 }

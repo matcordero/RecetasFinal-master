@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ import com.RecetasFinal.Entities.Foto;
 import com.RecetasFinal.Entities.Ingrediente;
 import com.RecetasFinal.Entities.Paso;
 import com.RecetasFinal.Entities.Receta;
+import com.RecetasFinal.Entities.Recetas_Usuario;
 import com.RecetasFinal.Entities.Sesion;
 import com.RecetasFinal.Entities.Tipo;
 import com.RecetasFinal.Entities.Usuario;
@@ -72,6 +74,9 @@ public class ControllerReceta {
     
     @Autowired
     private ServicioMail servicioMail;
+    
+    @Autowired
+    private Recetas_UsuarioService recetas_UsuarioService;
     
     /*--Cargar Fotos--*/
     @CrossOrigin
@@ -133,6 +138,15 @@ public class ControllerReceta {
 		}
     	
     }
+    //TODO//
+    @CrossOrigin
+    @GetMapping(value = "/probar")
+    public ResponseEntity<?> probar(@RequestBody Ingrediente ingrediente){
+    	return ResponseEntity.ok().body(ingredienteService.save(ingrediente));
+    }
+    
+    
+    
     
     /*---Usuario---*/
     @CrossOrigin
@@ -647,6 +661,29 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.unprocessableEntity().body("Usuario no Valido");
     }
+    
+    @CrossOrigin
+    @PostMapping(value = "/eliminarReceta/{idReceta}")
+    public ResponseEntity<?> eliminarReceta(@PathVariable int idReceta){
+    		Optional<Receta> oReceta = recetaService.findById(idReceta);
+            if(oReceta.isPresent()) {
+            	Receta receta = oReceta.get();
+            	List<Recetas_Usuario> recetas_Usuarios = recetas_UsuarioService.obtenerPorReceta(receta);
+            	recetaService.borrarReceta(receta);
+            	
+            	for(Recetas_Usuario recetas_Usuario:recetas_Usuarios) {
+            		Usuario u1 = recetas_Usuario.getUsuario();
+            		u1.getRecetasIntentar().remove(receta);
+            		recetas_UsuarioService.eliminar(recetas_Usuario);
+            		usuarioService.save(u1);
+            		
+            	}
+            	
+            	return ResponseEntity.ok().body("Receta Borrada");
+            }
+            return ResponseEntity.unprocessableEntity().body("Receta no Valido");
+    }
+    
     
     @CrossOrigin
     @GetMapping(value = "/getIngredientes")

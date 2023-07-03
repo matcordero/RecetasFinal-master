@@ -30,6 +30,10 @@ public class RecetaService {
     /*public List<Receta> obtenerUltimasTresRecetas() {
         return recetaRepository.findTop3ByOrderByIdRecetaDesc();
     }*/
+    public void borrarReceta(Receta receta) {
+    	recetaRepository.delete(receta);
+    }
+    
     
     public List<Receta> obtenerTodosRecetas(){
     	return recetaRepository.findAll();
