@@ -43,7 +43,11 @@ public class Receta {
     @JoinColumn(name = "foto")
     private Foto foto;
 
-
+    @JsonIgnore
+    @Column(name = "habilitado")
+    private String habilitado;
+    
+    
     @Column(name = "porciones")
     private int porciones;
 

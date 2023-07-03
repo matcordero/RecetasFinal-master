@@ -177,8 +177,8 @@ public class ControllerReceta {
     	return ResponseEntity.ok().body(utilizadosEnviar);
     }
     @CrossOrigin
-    @GetMapping(value = "/probar2")
-    public ResponseEntity<?> probar2(@RequestBody Receta receta){
+    @PostMapping(value = "/CrearReceta")
+    public ResponseEntity<?> crearReceta(@RequestBody Receta receta){
     	System.out.println(receta);
     	List<Paso> pasos = receta.getPasos();
     	for(Paso paso:pasos) {
@@ -190,6 +190,7 @@ public class ControllerReceta {
     	}
     	Foto foto = fotoService.findById(26).get();
     	receta.setFoto(foto);
+    	receta.setHabilitado("No");
     	return ResponseEntity.ok().body(recetaService.save(receta));
     }
     
@@ -242,7 +243,7 @@ public class ControllerReceta {
     		usuarion.setMail(email);
     		usuarion.setNickname(alias);
     		usuarioService.save(usuarion);
-    		servicioMail.sendListEmail(email, "Seleccione el link para continuar con la creacion de la cuenta https://recetasfinal-master-production.up.railway.app/Recetas/Controller/habilitarCuenta/"+usuarion.getIdUsuario().toString());
+    		servicioMail.sendListEmail(email, "El Proceso de Registro Funciono de manera Correcta, termine de completar los datos para poder ingresar");
     		return ResponseEntity.status(HttpStatus.CREATED).body(usuarion.getIdUsuario());
     	}
     	else if(contienemail) {
@@ -440,6 +441,7 @@ public class ControllerReceta {
     public ResponseEntity<?> ultimasTresRecetas() {
 
         List<Receta> todasRecetas = recetaService.obtenerTodosRecetas();
+        todasRecetas = todasRecetas.stream().filter(r -> "Si".equals(r.getHabilitado())).toList();
         List<Receta> ultimasTresRecetas = new ArrayList<>();
         int totalRecetas = todasRecetas.size();
         if (totalRecetas >= 3) {
@@ -816,7 +818,7 @@ public class ControllerReceta {
     @GetMapping(value = "/buscarReceta/{nombre}")
     public ResponseEntity<?> getRecetasByNombre(@PathVariable String nombre) {
         List<Receta> todasRecetas = recetaService.obtenerRecetasbyNombre(nombre);
-        todasRecetas.sort(Comparator.comparing(Receta::getIdReceta).reversed());
+        todasRecetas = todasRecetas.stream().filter(r -> "Si".equals(r.getHabilitado())).toList();
         return ResponseEntity.ok().body(todasRecetas);
     }
     @CrossOrigin
@@ -826,6 +828,8 @@ public class ControllerReceta {
         if(oTipo.isPresent()) {
         	Tipo tipo = oTipo.get();
         	List<Receta> recetas = recetaService.obtenerRecetasPorTipo(tipo);
+        	recetas.sort(Comparator.comparing(Receta::getIdReceta).reversed());
+        	recetas = recetas.stream().filter(r -> "Si".equals(r.getHabilitado())).toList();
         	return ResponseEntity.ok().body(recetas);
         }
         return ResponseEntity.unprocessableEntity().body("Ese Tipo no existe");
