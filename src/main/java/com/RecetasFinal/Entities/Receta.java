@@ -55,7 +55,7 @@ public class Receta {
     @JoinColumn(name = "idTipo")
     private Tipo tipo;
 
-    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "receta", orphanRemoval = true)
     private List<Foto> fotos= new ArrayList<>();
     
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -164,7 +164,7 @@ public class Receta {
 	@Override
 	public String toString() {
 		return "Receta [idReceta=" + idReceta + ", usuario=" + usuario + ", nombre=" + nombre + ", descripcion="
-				+ descripcion + ", foto=" + foto.getUrlFoto() + ", porciones=" + porciones + ", cantidadPersonas=" + cantidadPersonas
+				+ descripcion + ", porciones=" + porciones + ", cantidadPersonas=" + cantidadPersonas
 				+ ", tipo=" + tipo.getDescripcion() + "]";
 	}
     

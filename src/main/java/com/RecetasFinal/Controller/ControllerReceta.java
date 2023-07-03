@@ -176,7 +176,22 @@ public class ControllerReceta {
     	}
     	return ResponseEntity.ok().body(utilizadosEnviar);
     }
-    
+    @CrossOrigin
+    @GetMapping(value = "/probar2")
+    public ResponseEntity<?> probar2(@RequestBody Receta receta){
+    	System.out.println(receta);
+    	List<Paso> pasos = receta.getPasos();
+    	for(Paso paso:pasos) {
+    		paso.setReceta(receta);
+    	}
+    	List<Utilizado> utilizados = receta.getUtilizados();
+    	for(Utilizado utilizado:utilizados) {
+    		utilizado.setReceta(receta);
+    	}
+    	Foto foto = fotoService.findById(26).get();
+    	receta.setFoto(foto);
+    	return ResponseEntity.ok().body(recetaService.save(receta));
+    }
     
     
     
